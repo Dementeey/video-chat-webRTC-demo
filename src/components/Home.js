@@ -8,9 +8,10 @@ import useOnlineConnections from '../hooks/onlineConnections'
 
 import Button from './Button'
 
-const Home = () => {
+const Home = ({ history, location }) => {
   const [username, setUsername] = useState('')
   const onControlInput = ({ target }) => setUsername(target.value)
+  const isReconnect = location.state && location.state.reconnect
   const {
     isConnect,
     setConnect,
@@ -38,11 +39,22 @@ const Home = () => {
     if (!isEmpty(parseUser) && onlineConnections.some(item => item.id === parseUser.id)) {
       setConnect(true)
     }
+
+    if (isReconnect) {
+      setConnect(false)
+      localStorage.clear()
+    }
   })
+
+  console.log('=========location=========')
+  console.log(location.state)
+  console.log('=========END=========')
 
   return (
     <>
       <h1>Video chat with WebRTC</h1>
+
+      {isReconnect && <h3>Reconnect please</h3>}
 
       {onlineItems && (
         <>
