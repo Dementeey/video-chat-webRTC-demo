@@ -113,6 +113,12 @@ h1 {
   bottom: 5px;
 }
 
+.username {
+  padding: 1em 2.5em;
+  background-color: #0f5264;
+  border: 1px solid #61dafb;
+  color: #61dafb;
+}
 
 
 @media screen and (max-width: 1345px) {
