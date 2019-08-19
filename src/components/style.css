@@ -12,7 +12,6 @@ h1 {
   cursor: pointer;
 }
 
-
 .online-box {
   position: relative;
   z-index: 2;
@@ -48,7 +47,6 @@ h1 {
   border-top: 1px solid #0f5264;
 }
 
-
 .view {
   position: relative;
   min-width: 400px;
@@ -58,6 +56,13 @@ h1 {
   height: 60vh;
 
   border: 2px dashed #0f5264;
+}
+
+.view-error {
+  border-color: tomato;
+  background-color: #282c34;
+
+  color: white;
 }
 
 .preview-self {
@@ -119,7 +124,6 @@ h1 {
   border: 1px solid #61dafb;
   color: #61dafb;
 }
-
 
 @media screen and (max-width: 1345px) {
   .preview-self {

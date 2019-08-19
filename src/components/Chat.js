@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Redirect } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+
 import './style.css'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -7,11 +7,60 @@ import VideoContainer from './VideoContainer'
 
 import useOnlineConnections from '../hooks/onlineConnections'
 
+const constraints = (window.constraints = {
+  audio: true,
+  video: true
+})
+
+function handleSuccess(stream) {
+  const video = document.querySelector('video')
+  const videoTracks = stream.getVideoTracks()
+  console.log('Got stream with constraints:', constraints)
+  console.log(`Using video device: ${videoTracks[0].label}`)
+
+  video.srcObject = stream
+}
+
+const handleError = (error, setErrorMsg) => {
+  if (error.name === 'ConstraintNotSatisfiedError') {
+    let v = constraints.video
+
+    return setErrorMsg(
+      `The resolution ${v.width.exact}x${v.height.exact} px is not supported by your device.`
+    )
+  }
+  if (error.name === 'PermissionDeniedError') {
+    return setErrorMsg(
+      'Permissions have not been granted to use your camera and ' +
+        'microphone, you need to allow the page access to your devices in ' +
+        'order for the demo to work.'
+    )
+  }
+  return setErrorMsg(`getUserMedia error: ${error.name}`, error)
+}
+
 const Chat = ({ match, history }) => {
   const { onlineConnections, setOnlineConnections } = useOnlineConnections()
+  const [errorMessage, setErrorMsg] = useState('')
+  const [stream, setStream] = useState([])
   const userRaw = localStorage.getItem('user')
   const userParse = JSON.parse(userRaw)
   const selfId = userParse ? userParse.id : ''
+
+  const init = async () => {
+    const options = {
+      audio: true,
+      video: true
+    }
+
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia(options)
+
+      setStream(mediaStream)
+    } catch (error) {
+      handleError(error, setErrorMsg)
+    }
+  }
 
   const previewUsers = onlineConnections
     .filter(item => item.id !== selfId)
@@ -22,6 +71,15 @@ const Chat = ({ match, history }) => {
         </li>
       )
     })
+
+  useEffect(() => {
+    const { roomToken } = match.params
+    const roomTokenLocal = localStorage.getItem('roomToken')
+
+    if (roomToken && roomToken === roomTokenLocal) {
+      init()
+    }
+  }, [])
 
   useEffect(() => {
     const online = localStorage.getItem('online')
@@ -53,13 +111,20 @@ const Chat = ({ match, history }) => {
     <>
       <h1>Chat</h1>
 
-      <div className="view">
-        <div className="preview-self">
-          <span className="self">Your selfie</span>
+      {errorMessage ? (
+        <div className="view view-error">
+          <p>{errorMessage}</p>
+        </div>
+      ) : (
+        <div className="view">
+          <div className="preview-self">
+            <span className="self">Your selfie</span>
+            <VideoContainer stream={stream} />
+          </div>
+
           <VideoContainer />
         </div>
-        <VideoContainer />
-      </div>
+      )}
 
       {previewUsers.length > 0 && (
         <div className="preview-users-wrap">

@@ -2,7 +2,7 @@ import React from 'react'
 import './style.css'
 
 const VideoContainer = () => {
-  return <div className="video-container" />
+  return <video autoPlay className="video-container" />
 }
 
 export default VideoContainer
