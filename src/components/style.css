@@ -113,9 +113,9 @@ h1 {
   position: absolute;
 
   color: #61dafb;
-  font-size: 13px;
+  font-size: 12px;
   right: 8px;
-  bottom: 5px;
+  bottom: 2px;
 }
 
 .username {
@@ -125,14 +125,29 @@ h1 {
   color: #61dafb;
 }
 
+.video-container {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
+
 @media screen and (max-width: 1345px) {
   .preview-self {
     right: -2px;
   }
 }
 
-.video-container {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+@media screen and (max-width: 600px) {
+  .view {
+    padding: 10px;
+    width: 90vw;
+    min-width: unset;
+    min-height: unset;
+    height: unset;
+    margin-top: 175px;
+  }
+
+  .preview-self {
+    top: -175px;
+  }
 }
