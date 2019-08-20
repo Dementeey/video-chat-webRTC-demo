@@ -91,6 +91,7 @@ nav {
     flex-direction: column;
     justify-content: flex-start;
     width: 100vw;
+    min-height: 650px;
     height: 100vh;
   }
 

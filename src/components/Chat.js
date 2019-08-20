@@ -109,6 +109,16 @@ const Chat = ({ match, history }) => {
     <>
       <h1>Chat</h1>
 
+      <p>
+        <input
+          id="TOGGLE_AUDIO"
+          type="checkbox"
+          onChange={({ target }) => setSettingAudio(target.checked)}
+        />
+
+        <label htmlFor="TOGGLE_AUDIO">Turn {isOnAudio ? 'off' : 'on'} audio</label>
+      </p>
+
       {errorMessage ? (
         <div className="view view-error">
           <p>{errorMessage}</p>
@@ -129,16 +139,6 @@ const Chat = ({ match, history }) => {
           <ul className="preview-users">{previewUsers}</ul>
         </div>
       )}
-
-      <p>
-        <input
-          id="TOGGLE_AUDIO"
-          type="checkbox"
-          onChange={({ target }) => setSettingAudio(target.checked)}
-        />
-
-        <label htmlFor="TOGGLE_AUDIO">Turn {isOnAudio ? 'off' : 'on'} audio</label>
-      </p>
     </>
   )
 }
