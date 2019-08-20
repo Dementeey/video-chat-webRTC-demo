@@ -14,6 +14,11 @@ function handleSuccess(stream) {
 }
 
 const handleError = (error, setErrorMsg) => {
+  const constraints = (window.constraints = {
+    audio: false,
+    video: true
+  })
+
   if (error.name === 'ConstraintNotSatisfiedError') {
     let v = constraints.video
 
