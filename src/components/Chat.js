@@ -7,16 +7,8 @@ import VideoContainer from './VideoContainer'
 
 import useOnlineConnections from '../hooks/onlineConnections'
 
-const constraints = (window.constraints = {
-  audio: true,
-  video: true
-})
-
 function handleSuccess(stream) {
   const video = document.querySelector('video')
-  const videoTracks = stream.getVideoTracks()
-  console.log('Got stream with constraints:', constraints)
-  console.log(`Using video device: ${videoTracks[0].label}`)
 
   video.srcObject = stream
 }
@@ -42,21 +34,18 @@ const handleError = (error, setErrorMsg) => {
 const Chat = ({ match, history }) => {
   const { onlineConnections, setOnlineConnections } = useOnlineConnections()
   const [errorMessage, setErrorMsg] = useState('')
-  const [stream, setStream] = useState([])
+  const [stream, setStream] = useState()
+  const [isOnAudio, setSettingAudio] = useState(false)
   const userRaw = localStorage.getItem('user')
   const userParse = JSON.parse(userRaw)
   const selfId = userParse ? userParse.id : ''
 
-  const init = async () => {
-    const options = {
-      audio: true,
-      video: true
-    }
-
+  const init = async options => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia(options)
 
       setStream(mediaStream)
+      handleSuccess(mediaStream)
     } catch (error) {
       handleError(error, setErrorMsg)
     }
@@ -75,11 +64,15 @@ const Chat = ({ match, history }) => {
   useEffect(() => {
     const { roomToken } = match.params
     const roomTokenLocal = localStorage.getItem('roomToken')
+    const options = {
+      audio: isOnAudio,
+      video: true
+    }
 
     if (roomToken && roomToken === roomTokenLocal) {
-      init()
+      init(options)
     }
-  }, [])
+  }, [isOnAudio, match])
 
   useEffect(() => {
     const online = localStorage.getItem('online')
@@ -110,6 +103,13 @@ const Chat = ({ match, history }) => {
   return (
     <>
       <h1>Chat</h1>
+      <input
+        id="TOGGLE_AUDIO"
+        type="checkbox"
+        onChange={({ target }) => setSettingAudio(target.checked)}
+      />
+
+      <label htmlFor="TOGGLE_AUDIO">Turn on or turn off audio</label>
 
       {errorMessage ? (
         <div className="view view-error">
@@ -119,10 +119,10 @@ const Chat = ({ match, history }) => {
         <div className="view">
           <div className="preview-self">
             <span className="self">Your selfie</span>
-            <VideoContainer stream={stream} />
+            <VideoContainer />
           </div>
 
-          <VideoContainer />
+          {stream && <VideoContainer stream={stream} />}
         </div>
       )}
 
